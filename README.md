@@ -15,3 +15,15 @@ Basic functionality:
 Not intended for anything else than a simple demo!
 (Might become useful inte future.)
 
+### Usage
+
+- Clone this repo
+- Navigate into repo directory and run `cargo build` to install and build the program.
+- Run it using `cargo run` or by running the executable found in the `/target/debug/` directory
+
+### Problems
+
+Only tried it on my windows machine. Sometimes, the software loses its connection with the SpeedEditor unit.
+I don't have a clue why.
+
+
