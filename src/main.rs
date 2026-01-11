@@ -39,7 +39,7 @@ async fn main() {
     //---------------------------------------------
     // Send the handshake message to Dorico
     dorico_ws_write
-        .send_text(r#"{"message": "connect","clientName": "TestClient","handshakeVersion": "1.0"}"#.into())
+        .send_text(r#"{"message": "connect","clientName": "Dorico SpeedEditor Client","handshakeVersion": "1.0"}"#.into())
         .await
         .unwrap();
 
@@ -173,12 +173,21 @@ async fn main() {
 
                         let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.Enter?Set=true", &session_token).into()).await.unwrap();
                     }
+
                     Key::Cam4 => {
                         let _ = &dorico_ws_write
                             .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kQuaver", &session_token).into())
                             .await
                             .unwrap();
                     }
+
+                    Key::Cam1 => {
+                        let _ = &dorico_ws_write
+                            .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kQuaver", &session_token).into())
+                            .await
+                            .unwrap();
+                    }
+
                     Key::Cam5 => {
                         let _ = &dorico_ws_write
                             .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kCrotchet", &session_token).into())
@@ -191,15 +200,25 @@ async fn main() {
                             .await
                             .unwrap();
                     }
-                    Key::Roll => {
-                        let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.SlurStart", &session_token).into()).await.unwrap();
-                    }
-                    Key::StopPlay => {
+                    Key::Cam7 => {
                         let _ = &dorico_ws_write
-                            .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
+                            .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kSemibreve", &session_token).into())
                             .await
                             .unwrap();
                     }
+
+                    Key::Roll => {
+                        let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.SlurStart", &session_token).into()).await.unwrap();
+                    }
+
+                    Key::StopPlay => {
+                        let _ = &dorico_ws_write
+                            .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
+                            // .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
+                            .await
+                            .unwrap();
+                    }
+
                     _ => {
                         dbg!(&key);
                     }
