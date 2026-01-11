@@ -207,16 +207,21 @@ async fn main() {
                             .unwrap();
                     }
 
+                    Key::StopPlay => {
+                        let _ = &dorico_ws_write
+                            .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
+                            .await
+                            .unwrap();
+                    }
+
+                    // Slur start
                     Key::Roll => {
                         let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.SlurStart", &session_token).into()).await.unwrap();
                     }
 
-                    Key::StopPlay => {
-                        let _ = &dorico_ws_write
-                            .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
-                            // .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
-                            .await
-                            .unwrap();
+                    // Tuyplet start
+                    Key::TransDur => {
+                        let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.StartTupletRun?Definition=3", &session_token).into()).await.unwrap();
                     }
 
                     _ => {
@@ -224,9 +229,16 @@ async fn main() {
                     }
                 },
                 false => match key {
+                    // Slur end
                     Key::Roll => {
                         let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.SlurStop", &session_token).into()).await.unwrap();
                     }
+
+                    // Tuyplet end
+                    Key::TransDur => {
+                        let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.EndTupletRun", &session_token).into()).await.unwrap();
+                    }
+
                     _ => {
                         dbg!(&key);
                     }
