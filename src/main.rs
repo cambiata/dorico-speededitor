@@ -29,9 +29,10 @@ async fn main() {
 
     //---------------------------------------------
     // Set up websocket connection to Dorico Remote API
-    let dorico_websocket = WebSocket::connect("ws://127.0.0.1:4560").await.unwrap();
+    let dorico_ws = WebSocket::connect("ws://127.0.0.1:4560").await.unwrap();
+
     // Split the websocket into read and write entities
-    let (mut dorico_ws_read, mut dorico_ws_write) = dorico_websocket.split();
+    let (mut dorico_ws_read, mut dorico_ws_write) = dorico_ws.split();
 
     println!(">>> Dorico will now show a dialog box asking for permission to connect. ");
     println!(">>> Please accept by pressing the OK-button.");
@@ -157,7 +158,6 @@ async fn main() {
 
     //--------------------------------------------------------------------
     // Set up listener for application messages
-
     let mut jog_delta = 0;
     let mut input_note_active: NoteInputActive = NoteInputActive::False;
 
@@ -174,6 +174,15 @@ async fn main() {
                         let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.Enter?Set=true", &session_token).into()).await.unwrap();
                     }
 
+                    // Sixteenth note
+                    Key::Cam1 => {
+                        let _ = &dorico_ws_write
+                            .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kSemiQuaver", &session_token).into())
+                            .await
+                            .unwrap();
+                    }
+
+                    // Eighth note
                     Key::Cam4 => {
                         let _ = &dorico_ws_write
                             .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kQuaver", &session_token).into())
@@ -181,25 +190,23 @@ async fn main() {
                             .unwrap();
                     }
 
-                    Key::Cam1 => {
-                        let _ = &dorico_ws_write
-                            .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kQuaver", &session_token).into())
-                            .await
-                            .unwrap();
-                    }
-
+                    // Quarter note
                     Key::Cam5 => {
                         let _ = &dorico_ws_write
                             .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kCrotchet", &session_token).into())
                             .await
                             .unwrap();
                     }
+
+                    // Half note
                     Key::Cam6 => {
                         let _ = &dorico_ws_write
                             .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kMinim", &session_token).into())
                             .await
                             .unwrap();
                     }
+
+                    // Whole note
                     Key::Cam7 => {
                         let _ = &dorico_ws_write
                             .send_text(dorico_command("NoteInput.NoteValue?LogDuration=kSemibreve", &session_token).into())
@@ -207,15 +214,18 @@ async fn main() {
                             .unwrap();
                     }
 
+                    // Add pause
                     Key::StopPlay => {
                         let _ = &dorico_ws_write
-                            .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
+                            // .send_text(dorico_command("Play.StartOrStop?PlayFromLocation=kSelection", &session_token).into())
+                            .send_text(dorico_command("NoteInput.MoveAdvance", &session_token).into())
                             .await
                             .unwrap();
                     }
 
                     // Slur start
                     Key::Roll => {
+                        // let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.SlurStart", &session_token).into()).await.unwrap();
                         let _ = &dorico_ws_write.send_text(dorico_command("NoteInput.SlurStart", &session_token).into()).await.unwrap();
                     }
 
